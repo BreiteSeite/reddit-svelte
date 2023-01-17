@@ -39,7 +39,7 @@
 				entries.forEach((entry) => {
 					if (entry.isIntersecting) {
 						observer.unobserve(entry.target);
-						debugger;
+
 						loadSubmissions(
 							'teslamotors',
 							entry.target.querySelector('li')?.getAttribute('data-reddit-post-id')
