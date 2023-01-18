@@ -5,3 +5,7 @@
 
 <h1 class="border ">Posts in /r/{subreddit}</h1>
 <SubmissionPreviewList {subreddit} />
+
+<svelte:head>
+	<title>Posts from /r/{subreddit}</title>
+</svelte:head>

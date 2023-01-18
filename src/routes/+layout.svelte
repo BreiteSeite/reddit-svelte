@@ -5,5 +5,5 @@
 <slot />
 
 <svelte:head>
-	<title>A reddit client with SvelteKit</title>
+	<title>reddit</title>
 </svelte:head>
