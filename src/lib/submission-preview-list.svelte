@@ -14,9 +14,7 @@
 	let previousLastListItem: Element | null = null;
 
 	onMount(async () => {
-		let response = await loadSubmissions(subreddit);
-		submissions = response.data.children;
-		after = response.data.after ?? null;
+		refreshSubmissions();
 	});
 
 	const loadSubmissions = async (
@@ -40,6 +38,13 @@
 		return response;
 	};
 
+	const refreshSubmissions = () => {
+		loadSubmissions(subreddit, after, submissions.length).then((resp) => {
+			submissions = submissions.concat(resp.data.children);
+			after = resp.data.after ?? null;
+		});
+	};
+
 	afterUpdate(() => {
 		if (browser) {
 			let callback: IntersectionObserverCallback = (entries, observer) => {
@@ -47,10 +52,7 @@
 					if (entry.isIntersecting) {
 						observer.unobserve(entry.target);
 
-						loadSubmissions(subreddit, after, submissions.length).then((resp) => {
-							submissions = submissions.concat(resp.data.children);
-							after = resp.data.after ?? null;
-						});
+						refreshSubmissions();
 					}
 				});
 			};
