@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let subreddit: string = 'all';
+	export let subreddit: string;
 
 	import { onMount, afterUpdate } from 'svelte';
 
