@@ -57,7 +57,7 @@
 
 			const observer = new IntersectionObserver(callback, {
 				threshold: 0.1,
-				rootMargin: '-100% 0% 20%'
+				rootMargin: '-100% 0% 100%'
 			});
 
 			const lastListItem = document.querySelector('#submissions div:last-child');
