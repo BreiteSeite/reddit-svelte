@@ -1,5 +1,5 @@
 <script lang="ts">
-	export const subreddit: string = 'all';
+	export let subreddit: string = 'all';
 
 	import { onMount, afterUpdate } from 'svelte';
 
@@ -10,17 +10,24 @@
 	import { browser } from '$app/environment';
 
 	let submissions: Submission[] = [];
+	let after: string | null = null;
 	let previousLastListItem: Element | null = null;
 
 	onMount(async () => {
-		submissions = await loadSubmissions('teslamotors');
+		let response = await loadSubmissions(subreddit);
+		submissions = response.data.children;
+		after = response.data.after ?? null;
 	});
 
-	const loadSubmissions = async (subreddit: string, after: string | null = null) => {
+	const loadSubmissions = async (
+		subreddit: string,
+		after: string | null = null,
+		count: number | null = null
+	) => {
 		const requestSearchParams = new URLSearchParams(`raw_json=1`);
-
-		if (after) {
+		if (after && count) {
 			requestSearchParams.append('after', after);
+			requestSearchParams.append('count', count.toString());
 		}
 
 		const response: Listing<Submission> =
@@ -30,7 +37,7 @@
 			await (
 				await fetch(`https://www.reddit.com/r/${subreddit}.json?${requestSearchParams}`)
 			).json();
-		return response.data.children;
+		return response;
 	};
 
 	afterUpdate(() => {
@@ -40,10 +47,10 @@
 					if (entry.isIntersecting) {
 						observer.unobserve(entry.target);
 
-						loadSubmissions(
-							'teslamotors',
-							entry.target.querySelector('li')?.getAttribute('data-reddit-post-id')
-						).then((resp) => (submissions = submissions.concat(resp)));
+						loadSubmissions(subreddit, after, submissions.length).then((resp) => {
+							submissions = submissions.concat(resp.data.children);
+							after = resp.data.after ?? null;
+						});
 					}
 				});
 			};
